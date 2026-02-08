@@ -1,11 +1,10 @@
 import streamlit as st
 
-# 1. CONFIGURAÇÃO DA PÁGINA (DEVE SER A PRIMEIRA LINHA)
-st.set_page_config(page_title="Calculadora de Pace e Tiros", page_icon="🏃")
-
-# 2. INJEÇÃO DA METATAG PARA VERIFICAÇÃO DO ADSENSE
-# O comando st.html garante que o Google encontre seu código ca-pub
+# 1. INJEÇÃO DA METATAG PARA O GOOGLE ADSENSE (ESSENCIAL PARA VERIFICAÇÃO)
 st.html('<meta name="google-adsense-account" content="ca-pub-3241373482970085">')
+
+# 2. CONFIGURAÇÃO DA PÁGINA
+st.set_page_config(page_title="Calculadora de Pace e Tiros", page_icon="🏃")
 
 st.title("🏃 Calculadora de Pace e Performance")
 st.subheader("Organize seus treinos e calcule seu ritmo para 5km, 10km e Maratonas.")
