@@ -1,121 +1,111 @@
 import streamlit as st
 
-# Configuração da Página
-st.set_page_config(page_title="Pace Pro - Fisiologia e Performance", page_icon="🏃‍♂️", layout="wide")
+st.set_page_config(page_title="Pace Pro - Treinamento Avançado", page_icon="🏃‍♂️", layout="wide")
 
-# CSS Customizado para Visual "Alto Nível"
+# Estilização Premium
 st.markdown("""
     <style>
-    .main {
-        background-color: #f8f9fa;
-    }
-    .stButton>button {
-        width: 100%;
-        border-radius: 5px;
-        height: 3em;
-        background-color: #007BFF;
-        color: white;
-        font-weight: bold;
-    }
+    .main { background-color: #f4f7f6; }
+    .stNumberInput, .stSelectbox { border-radius: 10px; }
     .card {
+        padding: 25px;
+        border-radius: 15px;
+        background-color: white;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
+        border-top: 5px solid #007BFF;
+    }
+    .result-box {
+        background-color: #f8f9fa;
         padding: 20px;
         border-radius: 10px;
-        background-color: white;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-    }
-    h1, h2, h3 {
-        color: #1E1E1E;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
-    .metric-box {
-        background-color: #e9ecef;
-        padding: 15px;
-        border-radius: 8px;
+        border: 1px solid #dee2e6;
         text-align: center;
-        border-left: 5px solid #28a745;
     }
+    .highlight { color: #007BFF; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- CABEÇALHO ---
-st.title("🏃‍♂️ Pace Pro: Engenharia da Performance")
-st.markdown("### Transforme seus dados em resultados com ciência do esporte.")
+st.title("🏃‍♂️ Planejador de Performance Pace Pro")
+st.markdown("---")
 
-# Imagem de Hero (Corredor Real)
-st.image("https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80", 
-         caption="A alta performance começa na precisão dos dados.")
-
-# --- CALCULADORA EM COLUNAS ---
+# --- ÁREA DA CALCULADORA ---
 st.markdown('<div class="card">', unsafe_allow_html=True)
-col1, col2 = st.columns([1, 1])
+col1, col2, col3 = st.columns([1.5, 2, 2])
 
 with col1:
-    st.subheader("🎯 Calculadora de Ritmo")
-    distancia = st.selectbox("Distância da prova (km):", [5, 10, 21, 42], index=0)
+    st.subheader("📋 Parâmetros da Prova")
+    distancia = st.selectbox("Objetivo de Prova (km):", [5, 10, 21, 42], index=0)
+    minutos = st.number_input("Minutos pretendidos:", min_value=1, value=25)
+    segundos = st.number_input("Segundos pretendidos:", min_value=0, max_value=59, value=0)
     
-    c1, c2 = st.columns(2)
-    with c1:
-        minutos = st.number_input("Minutos totais:", min_value=0, value=25)
-    with c2:
-        segundos = st.number_input("Segundos totais:", min_value=0, max_value=59, value=0)
-
-    if st.button("Calcular Estratégia"):
-        tempo_total_seg = (minutos * 60) + segundos
-        ritmo_decimal = (tempo_total_seg / distancia) / 60
-        ritmo_min = int(ritmo_decimal)
-        ritmo_seg = int((ritmo_decimal - ritmo_min) * 60)
-        
-        st.markdown(f"""
-            <div class="metric-box">
-                <p style="margin:0;">Ritmo Médio Necessário:</p>
-                <h2 style="margin:0; color:#28a745;">{ritmo_min}:{ritmo_seg:02d} min/km</h2>
-            </div>
-        """, unsafe_allow_html=True)
+    tempo_total_seg = (minutos * 60) + segundos
+    ritmo_base = tempo_total_seg / distancia # seg/km
 
 with col2:
-    st.subheader("⏱️ Sugestão de Tiros (Intervalados)")
-    st.info("Treinos calculados com 10% de intensidade acima do pace de prova.")
-    # Cálculo lógico simplificado para os tiros
-    if 'ritmo_decimal' in locals():
-        tiro_400 = (ritmo_decimal * 0.9) * 0.4 * 60
-        st.write(f"**Tiro de 400m:** {int(tiro_400 // 60):02d}:{int(tiro_400 % 60):02d}")
-        st.write(f"**Tiro de 800m:** {int((tiro_400*2) // 60):02d}:{int((tiro_400*2) % 60):02d}")
-    else:
-        st.write("Insira os dados e clique em calcular para ver os tiros.")
+    st.subheader("⏱️ Guia de Ritmos (Paces)")
+    
+    # Lógica de Fisiologia para Paces
+    pace_tiro = ritmo_base * 0.92  # 8% mais rápido
+    pace_tempo = ritmo_base * 1.10 # 10% mais lento
+    pace_rodagem = ritmo_base * 1.25 # 25% mais lento
+
+    def format_pace(seg):
+        m, s = divmod(int(seg), 60)
+        return f"{m}:{s:02d}"
+
+    st.write(f"🚀 **Tiros (V02 Máx):** {format_pace(pace_tiro)} min/km")
+    st.write(f"⚡ **Tempo Run (Limiar):** {format_pace(pace_tempo)} min/km")
+    st.write(f"🐢 **Rodagem (Base):** {format_pace(pace_rodagem)} min/km")
+
+with col3:
+    st.subheader("🎯 Prescrição de Tiros")
+    
+    # Definindo volume e pausa por distância
+    if distancia == 5:
+        qtd, dist_tiro, pausa = 10, "400m", "90 seg"
+        tempo_tiro = pace_tiro * 0.4
+    elif distancia == 10:
+        qtd, dist_tiro, pausa = 6, "800m", "2 min"
+        tempo_tiro = pace_tiro * 0.8
+    elif distancia == 21:
+        qtd, dist_tiro, pausa = 5, "1000m", "2:30 min"
+        tempo_tiro = pace_tiro
+    else: # 42k
+        qtd, dist_tiro, pausa = 8, "1000m", "2 min"
+        tempo_tiro = pace_tiro
+
+    st.markdown(f"""
+    <div class="result-box">
+        <p>Sugerido para seu nível:</p>
+        <h2 style="color:#007BFF;">{qtd}x {dist_tiro}</h2>
+        <p>Tempo por tiro: <b>{format_pace(tempo_tiro)}</b></p>
+        <p>Descanso entre tiros: <span class="highlight">{pausa}</span></p>
+    </div>
+    """, unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
-# --- ARTIGO TÉCNICO (O que o Google AdSense ama) ---
-st.divider()
-st.header("🧬 A Fisiologia por trás do Treino de Tiros")
+# --- CONTEÚDO TÉCNICO ---
+st.header("🧬 A Ciência da Recuperação e Intensidade")
 
-col_text, col_img = st.columns([2, 1])
+tab1, tab2 = st.tabs(["Fisiologia das Pausas", "Tipos de Treino"])
 
-with col_text:
+with tab1:
     st.markdown("""
-    Os treinos intervalados, popularmente conhecidos como **treinos de tiro**, são o pilar central para corredores que buscam quebrar recordes pessoais. 
-    Mas o que acontece dentro do seu corpo durante esses esforços?
+    ### Por que a pausa é tão importante quanto o tiro?
+    A pausa no treino intervalado não serve apenas para "descansar". Ela controla o sistema energético utilizado:
+    * **Pausa Incompleta:** Mantém a frequência cardíaca elevada, forçando o corpo a trabalhar sob acúmulo de lactato.
+    * **Relação Esforço/Pausa:** Para ganhos de velocidade, usamos frequentemente a proporção 1:1 ou 1:0.5. Se você corre por 2 minutos, descansa 1 ou 2 minutos.
+    """)
     
-    #### 1. VO2 Máximo e Eficiência Cardíaca
-    Ao correr em intensidades superiores ao seu limiar aeróbico, você força o seu coração a bombear mais sangue por batimento (volume sistólico). 
-    Com o tempo, isso aumenta a sua capacidade máxima de consumo de oxigênio ($VO_2$ máx), permitindo que você corra mais rápido com menos esforço.
 
-    #### 2. Limiar de Lactato
-    O "tiro" ensina o seu corpo a lidar com o ácido lático. Em intensidades altas, o corpo produz lactato mais rápido do que consegue remover. 
-    O treinamento intervalado melhora a eficiência das suas mitocôndrias em oxidar esse lactato e reutilizá-lo como energia, retardando a fadiga extrema.
-    
-    #### 3. Recrutamento de Fibras Tipo II
-    Diferente da rodagem leve, o tiro recruta as **fibras musculares de contração rápida** (Tipo II). Elas são essenciais para o "sprint" final de uma prova e para melhorar a economia de corrida.
+with tab2:
+    st.markdown("""
+    ### Entendendo a Pirâmide de Treinamento
+    1.  **Rodagem (80% do seu volume):** Constrói a base mitocondrial e fortalece tendões.
+    2.  **Tempo Run:** O "confortavelmente difícil". Treina o corpo a remover o lactato enquanto você corre rápido.
+    3.  **Tiros:** Aumentam a potência do motor (Coração e Pulmão).
     """)
 
-with col_img:
-    st.image("https://images.unsplash.com/photo-1530143311094-34d807799e8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80")
-
-st.markdown("""
-> **Nota do Especialista:** Não realize treinos de tiro em dias consecutivos. O processo de supercompensação exige pelo menos 48 horas de recuperação para que as adaptações fisiológicas ocorram sem risco de lesão.
-""")
-
-# Rodapé
-st.divider()
-st.center = st.markdown("© 2026 Pace Pro - Ciência e Performance Humana")
+st.info("💡 **Dica para o AdSense:** Este conteúdo técnico aumenta o tempo de permanência no site, sinalizando ao Google que sua página é valiosa.")
