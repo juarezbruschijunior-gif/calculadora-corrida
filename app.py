@@ -1,7 +1,7 @@
 import streamlit as st
 
 # --- FUNÇÃO PARA O GOOGLE ADSENSE ENXERGAR O ADS.TXT ---
-# Se o Google tentar acessar /ads.txt, ele verá o seu código
+# Esta parte responde ao robô do Google com seus dados de autorização
 query_params = st.query_params
 if "ads.txt" in str(query_params):
     st.write("google.com, pub-3241373482970085, DIRECT, f08c47fec0942fa0")
