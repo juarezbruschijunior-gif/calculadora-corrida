@@ -13,9 +13,9 @@ components.html(
     height=0,
 )
 
-# 3. MENU LATERAL PROFISSIONAL (Item essencial para aprovação no AdSense)
-st.sidebar.title("Calculadora Pro")
-aba = st.sidebar.radio("Selecione:", ["Calculadora", "Política de Privacidade", "Contato"])
+# 3. MENU LATERAL PROFISSIONAL
+st.sidebar.title("Menu de Treino")
+aba = st.sidebar.radio("Selecione:", ["Calculadora", "Como Treinar", "Política de Privacidade", "Contato"])
 
 if aba == "Calculadora":
     st.title("🏃 Calculadora de Pace e Tiros Pro")
@@ -53,6 +53,18 @@ if aba == "Calculadora":
             t_tiro_seg = pace_tiro_seg_por_km * fator
             st.write(f"⏱️ **Tiro de {dist}:** {int(t_tiro_seg//60):02d}:{int(t_tiro_seg%60):02d}")
 
+elif aba == "Como Treinar":
+    st.title("📖 Como Treinar com Eficiência")
+    st.write("""
+    Para melhorar seu tempo na corrida, não basta apenas correr distâncias longas. É preciso variar os estímulos:
+    
+    * **Treino de Tiros (Intervalado):** Serve para aumentar sua capacidade cardiovascular e velocidade. Use os tempos calculados nesta ferramenta para seus tiros.
+    * **Rodagem Leve:** É essencial para a recuperação muscular. Deve ser feita em um ritmo confortável onde você consiga conversar enquanto corre.
+    * **Descanso Ativo:** Não treine intensamente todos os dias. O corpo precisa de tempo para reconstruir as fibras musculares.
+    * **Consistência:** O segredo da performance é manter a regularidade nos treinos semanais.
+    """)
+    st.info("Dica: Sempre faça um aquecimento de pelo menos 10 minutos antes de começar os tiros.")
+
 elif aba == "Política de Privacidade":
     st.title("Política de Privacidade")
     st.write("""
@@ -63,9 +75,9 @@ elif aba == "Política de Privacidade":
 elif aba == "Contato":
     st.title("Contato")
     st.write("📧 Desenvolvedor: Juarez Bruschi Junior")
-    st.write("Para sugestões sobre a calculadora, entre em contato.")
+    st.write("Dúvidas ou sugestões? Entre em contato para melhorarmos a ferramenta.")
 
-# 4. RODAPÉ DE AUTORIA (Confirmação de propriedade para o Google)
+# 4. RODAPÉ DE AUTORIA
 st.write("---")
-st.caption("Desenvolvido por **Juarez Bruschi Junior**")
+st.caption(f"Desenvolvido por **Juarez Bruschi Junior**")
 st.caption("Calculadora de Performance © 2026")
