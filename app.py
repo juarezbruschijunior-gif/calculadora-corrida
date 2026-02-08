@@ -1,111 +1,95 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-st.set_page_config(page_title="Pace Pro - Treinamento Avançado", page_icon="🏃‍♂️", layout="wide")
+# 1. CONFIGURAÇÃO DA PÁGINA
+st.set_page_config(page_title="BioScience Run - Calculadora de Performance", page_icon="🏃")
 
-# Estilização Premium
-st.markdown("""
-    <style>
-    .main { background-color: #f4f7f6; }
-    .stNumberInput, .stSelectbox { border-radius: 10px; }
-    .card {
-        padding: 25px;
-        border-radius: 15px;
-        background-color: white;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-        margin-bottom: 25px;
-        border-top: 5px solid #007BFF;
-    }
-    .result-box {
-        background-color: #f8f9fa;
-        padding: 20px;
-        border-radius: 10px;
-        border: 1px solid #dee2e6;
-        text-align: center;
-    }
-    .highlight { color: #007BFF; font-weight: bold; }
-    </style>
-    """, unsafe_allow_html=True)
+# 2. ADSENSE
+components.html(
+    """
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3241373482970085"
+     crossorigin="anonymous"></script>
+    """,
+    height=0,
+)
 
-st.title("🏃‍♂️ Planejador de Performance Pace Pro")
-st.markdown("---")
+# 3. MENU LATERAL
+st.sidebar.title("🔬 BioScience Menu")
+aba = st.sidebar.radio("Navegar:", ["Calculadora de Tiros (5km)", "Artigos e Fisiologia", "Privacidade", "Contato"])
 
-# --- ÁREA DA CALCULADORA ---
-st.markdown('<div class="card">', unsafe_allow_html=True)
-col1, col2, col3 = st.columns([1.5, 2, 2])
-
-with col1:
-    st.subheader("📋 Parâmetros da Prova")
-    distancia = st.selectbox("Objetivo de Prova (km):", [5, 10, 21, 42], index=0)
-    minutos = st.number_input("Minutos pretendidos:", min_value=1, value=25)
-    segundos = st.number_input("Segundos pretendidos:", min_value=0, max_value=59, value=0)
+if aba == "Calculadora de Tiros (5km)":
+    st.title("🏃 Calculadora de Tiros para 5 km")
+    st.write("Insira seu tempo pretendido nos 5 km para gerar sua planilha de tiros.")
     
-    tempo_total_seg = (minutos * 60) + segundos
-    ritmo_base = tempo_total_seg / distancia # seg/km
+    # Imagem de cabeçalho
+    st.image("https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=1000&auto=format&fit=crop", caption="Alta Performance e Ciência")
 
-with col2:
-    st.subheader("⏱️ Guia de Ritmos (Paces)")
+    st.write("---")
+    col1, col2 = st.columns(2)
+    with col1:
+        t_min = st.number_input("Minutos nos 5km:", min_value=10, value=25, step=1)
+    with col2:
+        t_seg = st.number_input("Segundos nos 5km:", min_value=0, max_value=59, value=0, step=1)
+
+    tempo_total_seg = (t_min * 60) + t_seg
+    pace_prova_seg = tempo_total_seg / 5
+    # Ritmo de tiro 10% mais rápido que o pace de prova
+    pace_tiro_seg = pace_prova_seg * 0.9
+
+    if st.button("Gerar Planilha de Treino"):
+        st.subheader("🎯 Sua Planilha de Tiros Customizada")
+        st.info(f"Seu Pace de Prova: {int(pace_prova_seg//60)}:{int(pace_prova_seg%60):02d} min/km")
+
+        # Configuração dos Tiros
+        tiros = {
+            "100 metros": {"fator": 0.1, "qtd": "12 a 15", "pausa": "45 seg"},
+            "400 metros": {"fator": 0.4, "qtd": "10 a 12", "pausa": "1 min 30 seg"},
+            "800 metros": {"fator": 0.8, "qtd": "6 a 8", "pausa": "2 min"},
+            "1000 metros": {"fator": 1.0, "qtd": "5 a 6", "pausa": "2 min 30 seg"}
+        }
+
+        for dist, info in tiros.items():
+            t_tiro_total = pace_tiro_seg * info["fator"]
+            m_tiro = int(t_tiro_total // 60)
+            s_tiro = int(t_tiro_total % 60)
+            
+            with st.expander(f"Tiros de {dist}"):
+                st.write(f"⏱️ **Tempo do tiro:** {m_tiro:02d}:{s_tiro:02d}")
+                st.write(f"🔢 **Quantidade:** {info['qtd']} repetições")
+                st.write(f"⏳ **Descanso:** {info['pausa']}")
+
+elif aba == "Artigos e Fisiologia":
+    st.title("🔬 Ciência da Performance")
     
-    # Lógica de Fisiologia para Paces
-    pace_tiro = ritmo_base * 0.92  # 8% mais rápido
-    pace_tempo = ritmo_base * 1.10 # 10% mais lento
-    pace_rodagem = ritmo_base * 1.25 # 25% mais lento
-
-    def format_pace(seg):
-        m, s = divmod(int(seg), 60)
-        return f"{m}:{s:02d}"
-
-    st.write(f"🚀 **Tiros (V02 Máx):** {format_pace(pace_tiro)} min/km")
-    st.write(f"⚡ **Tempo Run (Limiar):** {format_pace(pace_tempo)} min/km")
-    st.write(f"🐢 **Rodagem (Base):** {format_pace(pace_rodagem)} min/km")
-
-with col3:
-    st.subheader("🎯 Prescrição de Tiros")
+    st.image("https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1000&auto=format&fit=crop", caption="Biometria e Fisiologia do Exercício")
     
-    # Definindo volume e pausa por distância
-    if distancia == 5:
-        qtd, dist_tiro, pausa = 10, "400m", "90 seg"
-        tempo_tiro = pace_tiro * 0.4
-    elif distancia == 10:
-        qtd, dist_tiro, pausa = 6, "800m", "2 min"
-        tempo_tiro = pace_tiro * 0.8
-    elif distancia == 21:
-        qtd, dist_tiro, pausa = 5, "1000m", "2:30 min"
-        tempo_tiro = pace_tiro
-    else: # 42k
-        qtd, dist_tiro, pausa = 8, "1000m", "2 min"
-        tempo_tiro = pace_tiro
-
-    st.markdown(f"""
-    <div class="result-box">
-        <p>Sugerido para seu nível:</p>
-        <h2 style="color:#007BFF;">{qtd}x {dist_tiro}</h2>
-        <p>Tempo por tiro: <b>{format_pace(tempo_tiro)}</b></p>
-        <p>Descanso entre tiros: <span class="highlight">{pausa}</span></p>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# --- CONTEÚDO TÉCNICO ---
-st.header("🧬 A Ciência da Recuperação e Intensidade")
-
-tab1, tab2 = st.tabs(["Fisiologia das Pausas", "Tipos de Treino"])
-
-with tab1:
-    st.markdown("""
-    ### Por que a pausa é tão importante quanto o tiro?
-    A pausa no treino intervalado não serve apenas para "descansar". Ela controla o sistema energético utilizado:
-    * **Pausa Incompleta:** Mantém a frequência cardíaca elevada, forçando o corpo a trabalhar sob acúmulo de lactato.
-    * **Relação Esforço/Pausa:** Para ganhos de velocidade, usamos frequentemente a proporção 1:1 ou 1:0.5. Se você corre por 2 minutos, descansa 1 ou 2 minutos.
-    """)
-    
-
-with tab2:
-    st.markdown("""
-    ### Entendendo a Pirâmide de Treinamento
-    1.  **Rodagem (80% do seu volume):** Constrói a base mitocondrial e fortalece tendões.
-    2.  **Tempo Run:** O "confortavelmente difícil". Treina o corpo a remover o lactato enquanto você corre rápido.
-    3.  **Tiros:** Aumentam a potência do motor (Coração e Pulmão).
+    st.header("1. Treino Intervalado (Tiros)")
+    st.write("""
+    Como Biomédico, destaco que o treino de tiros induz a **biogênese mitocondrial**. Ao submeter o corpo a esforços acima do 
+    limiar aeróbico, forçamos o organismo a melhorar o tamponamento do lactato e a eficiência na ressíntese de ATP.
     """)
 
-st.info("💡 **Dica para o AdSense:** Este conteúdo técnico aumenta o tempo de permanência no site, sinalizando ao Google que sua página é valiosa.")
+    st.header("2. O Papel do Descanso")
+    st.write("""
+    A pausa entre os tiros é fundamental para a recuperação parcial dos estoques de fosfocreatina. Sem o descanso correto, 
+    o treino deixa de ser de velocidade e torna-se apenas exaustivo, aumentando o risco de lesões por estresse oxidativo.
+    """)
+
+    st.header("3. Rodagem e Capilarização")
+    st.write("""
+    Treinos leves aumentam a densidade capilar nos músculos, facilitando o transporte de oxigênio. É a base necessária 
+    para suportar os treinos intensos.
+    """)
+
+elif aba == "Privacidade":
+    st.title("Política de Privacidade")
+    st.write("Este site utiliza cookies do Google para anúncios. Não coletamos dados de saúde dos usuários.")
+
+elif aba == "Contato":
+    st.title("Contato")
+    st.write("📧 Responsável Técnico: **Juarez Bruschi Junior - Biomédico**")
+
+# 4. RODAPÉ PROFISSIONAL
+st.write("---")
+st.caption("Desenvolvido por **Juarez Bruschi Junior | Biomédico**")
+st.caption("BioScience Run Performance © 2026")
