@@ -1,10 +1,18 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
-# 1. INJEÇÃO DA METATAG PARA O GOOGLE ADSENSE (MANTIDA NO TOPO)
-st.html('<meta name="google-adsense-account" content="ca-pub-3241373482970085">')
-
-# 2. CONFIGURAÇÃO DA PÁGINA
+# 1. CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(page_title="Calculadora de Pace Pro", page_icon="🏃")
+
+# 2. INJEÇÃO DO CÓDIGO DO ADSENSE (SNIPPET DE CÓDIGO)
+# Este componente força o carregamento do script do Google no seu app
+components.html(
+    """
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3241373482970085"
+     crossorigin="anonymous"></script>
+    """,
+    height=0,
+)
 
 st.title("🏃 Calculadora de Pace e Tiros Pro")
 st.subheader("Precisão total com minutos e segundos para seus treinos.")
@@ -20,7 +28,7 @@ with col_min:
 with col_seg:
     t_seg = st.number_input("Segundos:", min_value=0, max_value=59, value=0, step=1)
 
-# Cálculo do tempo total em segundos para garantir a precisão
+# Cálculo do tempo total em segundos para precisão absoluta
 tempo_total_segundos = (t_min * 60) + t_seg
 
 if st.button("Calcular Ritmo e Tiros"):
@@ -31,12 +39,11 @@ if st.button("Calcular Ritmo e Tiros"):
     
     st.success(f"🎯 Seu ritmo médio (Pace) deve ser de: **{minutos_pace}:{segundos_pace:02d} min/km**")
 
-    # 5. CÁLCULO DE TIROS (INTENSIDADE 10% SUPERIOR AO PACE DE PROVA)
+    # 5. CÁLCULO DE TIROS (INTENSIDADE 10% SUPERIOR)
     st.write("---")
     st.header("🎯 Sugestão de Treino de Tiros")
-    st.write("Estes tempos são calculados para serem 10% mais velozes que seu pace de prova:")
+    st.write("Tempos calculados para serem 10% mais velozes que seu pace de prova:")
     
-    # Pace de tiro é 10% mais rápido (fator 0.9)
     pace_tiro_seg_por_km = pace_por_km_segundos * 0.9
 
     tiros_config = {
@@ -47,7 +54,6 @@ if st.button("Calcular Ritmo e Tiros"):
     }
 
     for dist, info in tiros_config.items():
-        # Calcula o tempo exato de cada tiro em segundos
         t_tiro_total_seg = pace_tiro_seg_por_km * info["fator"]
         m_tiro = int(t_tiro_total_seg // 60)
         s_tiro = int(t_tiro_total_seg % 60)
@@ -58,4 +64,4 @@ if st.button("Calcular Ritmo e Tiros"):
             st.write(f"⏳ **Pausa:** {info['pausa']}")
 
 st.write("---")
-st.info("💡 Com essa precisão, seu site agora oferece um cálculo de nível profissional para atletas.")
+st.info("💡 Com essa precisão, seu site oferece um cálculo profissional. Agora tente a verificação no AdSense.")
