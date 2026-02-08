@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # 1. CONFIGURAÇÃO DO SITE
-st.set_page_config(page_title="Calculadora de Pace Pro", page_icon="🏃")
+st.set_page_config(page_title="Calculadora de Pace Pro - BioScience", page_icon="🏃")
 
 # 2. ADSENSE (Código para o rastreador validar sua conta)
 components.html(
@@ -14,12 +14,12 @@ components.html(
 )
 
 # 3. MENU LATERAL PROFISSIONAL
-st.sidebar.title("Menu de Treino")
-aba = st.sidebar.radio("Selecione:", ["Calculadora", "Como Treinar", "Política de Privacidade", "Contato"])
+st.sidebar.title("🏃 BioScience Run")
+aba = st.sidebar.radio("Navegar por:", ["Calculadora de Performance", "Artigos Científicos", "Privacidade", "Contato"])
 
-if aba == "Calculadora":
+if aba == "Calculadora de Performance":
     st.title("🏃 Calculadora de Pace e Tiros Pro")
-    st.write("Calcule seu ritmo de prova com precisão de minutos e segundos.")
+    st.write("Ferramenta de precisão para atletas e treinadores.")
 
     st.write("---")
     distancia = st.selectbox("Distância da prova (km):", [5, 10, 21, 42])
@@ -33,18 +33,16 @@ if aba == "Calculadora":
 
     tempo_total_segundos = (t_min * 60) + t_seg
 
-    if st.button("Calcular Agora"):
-        # CÁLCULO DO PACE
+    if st.button("Calcular Planilha de Ritmo"):
         pace_por_km_segundos = tempo_total_segundos / distancia
         minutos_pace = int(pace_por_km_segundos // 60)
         segundos_pace = int(pace_por_km_segundos % 60)
         
-        st.success(f"🎯 Ritmo médio necessário: **{minutos_pace}:{segundos_pace:02d} min/km**")
+        st.success(f"🎯 Pace de Prova: **{minutos_pace}:{segundos_pace:02d} min/km**")
 
-        # TREINO DE TIROS
         st.write("---")
-        st.header("🎯 Sugestão de Treino de Tiros")
-        st.write("Intensidade 10% superior ao seu ritmo de prova:")
+        st.header("🎯 Sugestão de Treino de Tiros (Intervalado)")
+        st.write("Tempos calculados para estímulo de limiar anaeróbico (10% mais veloz):")
         
         pace_tiro_seg_por_km = pace_por_km_segundos * 0.9
         tiros = {"100m": 0.1, "400m": 0.4, "800m": 0.8, "1000m": 1.0}
@@ -53,31 +51,42 @@ if aba == "Calculadora":
             t_tiro_seg = pace_tiro_seg_por_km * fator
             st.write(f"⏱️ **Tiro de {dist}:** {int(t_tiro_seg//60):02d}:{int(t_tiro_seg%60):02d}")
 
-elif aba == "Como Treinar":
-    st.title("📖 Como Treinar com Eficiência")
-    st.write("""
-    Para melhorar seu tempo na corrida, não basta apenas correr distâncias longas. É preciso variar os estímulos:
+elif aba == "Artigos Científicos":
+    st.title("🔬 Fisiologia da Corrida")
     
-    * **Treino de Tiros (Intervalado):** Serve para aumentar sua capacidade cardiovascular e velocidade. Use os tempos calculados nesta ferramenta para seus tiros.
-    * **Rodagem Leve:** É essencial para a recuperação muscular. Deve ser feita em um ritmo confortável onde você consiga conversar enquanto corre.
-    * **Descanso Ativo:** Não treine intensamente todos os dias. O corpo precisa de tempo para reconstruir as fibras musculares.
-    * **Consistência:** O segredo da performance é manter a regularidade nos treinos semanais.
+    st.subheader("1. Treino de Tiros e o Limiar de Lactato")
+    st.write("""
+    Fisiologicamente, o treino de tiros (intervalado de alta intensidade) visa aumentar o seu **V02 Máximo** e a eficiência mitocondrial. 
+    Ao correr acima do seu pace de prova, você recruta fibras musculares do tipo II (contração rápida) e treina seu organismo para remover o lactato 
+    mais rapidamente do fluxo sanguíneo, adiando a fadiga muscular periférica.
     """)
-    st.info("Dica: Sempre faça um aquecimento de pelo menos 10 minutos antes de começar os tiros.")
+    
+    st.subheader("2. A Importância Biológica do Descanso")
+    st.write("""
+    O ganho de performance ocorre durante o descanso, não durante o treino. Este processo é conhecido como **Supercompensação**. 
+    Após o estresse mecânico e oxidativo do exercício, o corpo inicia uma cascata hormonal e proteica para reparar as microlesões musculares. 
+    Sem o descanso adequado, ocorre o aumento do cortisol basal, podendo levar ao *overtraining* e à queda do sistema imune.
+    """)
+    
+    st.subheader("3. Rodagem Leve e Biogênese Mitocondrial")
+    st.write("""
+    Treinos de baixa intensidade (Zonas 1 e 2) promovem a capilarização muscular, aumentando a oferta de oxigênio para os tecidos 
+    e otimizando a oxidação de lipídeos como fonte energética primária.
+    """)
 
-elif aba == "Política de Privacidade":
+elif aba == "Privacidade":
     st.title("Política de Privacidade")
     st.write("""
-    Respeitamos sua privacidade. Esta ferramenta não armazena dados pessoais. 
-    Anúncios são exibidos via Google AdSense para manter o serviço gratuito.
+    Esta ferramenta é de uso público e gratuito. Não armazenamos informações de saúde ou dados sensíveis. 
+    Cookies podem ser utilizados pelo Google AdSense para personalização de anúncios.
     """)
 
 elif aba == "Contato":
-    st.title("Contato")
-    st.write("📧 Desenvolvedor: Juarez Bruschi Junior")
-    st.write("Dúvidas ou sugestões? Entre em contato para melhorarmos a ferramenta.")
+    st.title("Contato Técnico")
+    st.write("Para consultorias ou suporte técnico sobre a ferramenta:")
+    st.write("📧 Responsável: **Juarez Bruschi Junior - Biomédico**")
 
-# 4. RODAPÉ DE AUTORIA
+# 4. RODAPÉ DE AUTORIDADE
 st.write("---")
-st.caption(f"Desenvolvido por **Juarez Bruschi Junior**")
-st.caption("Calculadora de Performance © 2026")
+st.caption("Desenvolvido por **Juarez Bruschi Junior** | Biomédico")
+st.caption("BioScience Performance & Tecnologia © 2026")
