@@ -1,35 +1,28 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
-# Configuração da página
-st.set_page_config(page_title="Calculadora de Pace - Pro")
+# --- FUNÇÃO PARA O GOOGLE ADSENSE ENXERGAR O ADS.TXT ---
+# Se o Google tentar acessar /ads.txt, ele verá o seu código
+query_params = st.query_params
+if "ads.txt" in str(query_params):
+    st.write("google.com, pub-3241373482970085, DIRECT, f08c47fec0942fa0")
+    st.stop()
+# -------------------------------------------------------
 
-# --- INJEÇÃO DO CÓDIGO ADSENSE ---
-# Usamos um componente de HTML para forçar o Google a ler o script na página
-adsense_script = """
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3241373482970085"
-     crossorigin="anonymous"></script>
-"""
-components.html(adsense_script, height=0)
-# ---------------------------------
+st.set_page_config(page_title="Calculadora de Pace Pro", page_icon="🏃")
 
 st.title("🏃 Calculadora de Pace e Performance")
-st.markdown("Calcule seu ritmo médio para treinos de 5km, 10km ou Maratona.")
+st.write("Calcule seu ritmo de corrida e planeje seus treinos para 5km, 10km ou Maratona.")
 
-# Parte da Calculadora
+# Campos da calculadora
 distancia = st.selectbox("Escolha a distância (km):", [5, 10, 21.1, 42.2])
-tempo_total_min = st.number_input("Tempo total (em minutos):", min_value=1, value=25)
+tempo_total_min = st.number_input("Tempo total (minutos):", min_value=1, value=25)
 
-if st.button("Calcular meu Ritmo"):
+if st.button("Calcular Ritmo"):
     pace_decimal = tempo_total_min / distancia
-    pace_minutos = int(pace_decimal)
-    pace_segundos = int((pace_decimal - pace_minutos) * 60)
-    st.success(f"Seu Pace médio é de **{pace_minutos}:{pace_segundos:02d} min/km**")
+    minutos = int(pace_decimal)
+    segundos = int((pace_decimal - minutos) * 60)
+    st.success(f"Seu ritmo é de **{minutos}:{segundos:02d} min/km**")
 
-# Conteúdo obrigatório para o Google aprovar (SEO)
 st.divider()
-st.header("O que é o Pace na corrida?")
-st.write("O pace é o indicador que mostra quantos minutos você leva para completar cada quilômetro.")
-st.write("Controlar o seu pace é a melhor forma de evoluir na corrida sem se lesionar.")
-
-
+st.header("O que é Pace?")
+st.write("O pace é o tempo médio que você leva para percorrer 1km. É essencial para o controle de intensidade nos treinos.")
