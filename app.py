@@ -1,95 +1,56 @@
 import streamlit as st
-import streamlit.components.v1 as components
 
-# 1. CONFIGURAÇÃO DA PÁGINA
-st.set_page_config(page_title="BioScience Run - Calculadora de Performance", page_icon="🏃")
+# Configuração da página para SEO
+st.set_page_config(page_title="Calculadora de Ritmo - Performance 5km", page_icon="🏃‍♂️")
 
-# 2. ADSENSE
-components.html(
-    """
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3241373482970085"
-     crossorigin="anonymous"></script>
-    """,
-    height=0,
-)
+# Estilo para melhorar o visual
+st.markdown("""
+    <style>
+    .main { background-color: #f5f7f9; }
+    .stButton>button { width: 100%; background-color: #2e7d32; color: white; }
+    </style>
+    """, unsafe_allow_html=True)
 
-# 3. MENU LATERAL
-st.sidebar.title("🔬 BioScience Menu")
-aba = st.sidebar.radio("Navegar:", ["Calculadora de Tiros (5km)", "Artigos e Fisiologia", "Privacidade", "Contato"])
+# Menu Lateral (Essencial para o AdSense aceitar a navegação)
+st.sidebar.title("🏃‍♂️ Menu de Treino")
+pagina = st.sidebar.radio("Navegar por:", ["Calculadora de Tiros", "Dicas de Performance", "Sobre o Especialista", "Privacidade"])
 
-if aba == "Calculadora de Tiros (5km)":
-    st.title("🏃 Calculadora de Tiros para 5 km")
-    st.write("Insira seu tempo pretendido nos 5 km para gerar sua planilha de tiros.")
+if pagina == "Calculadora de Tiros":
+    st.title("🏃‍♂️ Calculadora de Ritmo para Tiros de 5km")
+    st.write("Otimize seus treinos de velocidade com base no seu tempo objetivo.")
     
-    # Imagem de cabeçalho
-    st.image("https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?q=80&w=1000&auto=format&fit=crop", caption="Alta Performance e Ciência")
-
-    st.write("---")
     col1, col2 = st.columns(2)
     with col1:
-        t_min = st.number_input("Minutos nos 5km:", min_value=10, value=25, step=1)
+        distancia = st.selectbox("Distância do Tiro (metros):", [200, 400, 800, 1000])
     with col2:
-        t_seg = st.number_input("Segundos nos 5km:", min_value=0, max_value=59, value=0, step=1)
+        tempo_objetivo_min = st.number_input("Tempo alvo nos 5km (minutos):", min_value=15, max_value=60, value=25)
 
-    tempo_total_seg = (t_min * 60) + t_seg
-    pace_prova_seg = tempo_total_seg / 5
-    # Ritmo de tiro 10% mais rápido que o pace de prova
-    pace_tiro_seg = pace_prova_seg * 0.9
+    if st.button("Calcular Ritmo"):
+        # Cálculo simples de ritmo por tiro
+        ritmo_por_metro = (tempo_objetivo_min * 60) / 5000
+        tempo_tiro = ritmo_por_metro * distancia
+        minutos = int(tempo_tiro // 60)
+        segundos = int(tempo_tiro % 60)
+        
+        st.success(f"Para um 5km em {tempo_objetivo_min}min, seu tiro de {distancia}m deve ser de: **{minutos:02d}:{segundos:02d}**")
+        st.info("Dica: Descanse o dobro do tempo do tiro entre as repetições.")
 
-    if st.button("Gerar Planilha de Treino"):
-        st.subheader("🎯 Sua Planilha de Tiros Customizada")
-        st.info(f"Seu Pace de Prova: {int(pace_prova_seg//60)}:{int(pace_prova_seg%60):02d} min/km")
-
-        # Configuração dos Tiros
-        tiros = {
-            "100 metros": {"fator": 0.1, "qtd": "12 a 15", "pausa": "45 seg"},
-            "400 metros": {"fator": 0.4, "qtd": "10 a 12", "pausa": "1 min 30 seg"},
-            "800 metros": {"fator": 0.8, "qtd": "6 a 8", "pausa": "2 min"},
-            "1000 metros": {"fator": 1.0, "qtd": "5 a 6", "pausa": "2 min 30 seg"}
-        }
-
-        for dist, info in tiros.items():
-            t_tiro_total = pace_tiro_seg * info["fator"]
-            m_tiro = int(t_tiro_total // 60)
-            s_tiro = int(t_tiro_total % 60)
-            
-            with st.expander(f"Tiros de {dist}"):
-                st.write(f"⏱️ **Tempo do tiro:** {m_tiro:02d}:{s_tiro:02d}")
-                st.write(f"🔢 **Quantidade:** {info['qtd']} repetições")
-                st.write(f"⏳ **Descanso:** {info['pausa']}")
-
-elif aba == "Artigos e Fisiologia":
-    st.title("🔬 Ciência da Performance")
-    
-    st.image("https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1000&auto=format&fit=crop", caption="Biometria e Fisiologia do Exercício")
-    
-    st.header("1. Treino Intervalado (Tiros)")
+elif pagina == "Dicas de Performance":
+    st.header("📚 Como melhorar seu tempo nos 5km")
     st.write("""
-    Como Biomédico, destaco que o treino de tiros induz a **biogênese mitocondrial**. Ao submeter o corpo a esforços acima do 
-    limiar aeróbico, forçamos o organismo a melhorar o tamponamento do lactato e a eficiência na ressíntese de ATP.
+    1. **Treino de Intervalos (Tiros):** Melhora o VO2 máximo e a tolerância ao lactato.
+    2. **Rodagens Leves:** Fortalecem a base aeróbica.
+    3. **Fortalecimento:** Previne lesões e melhora a economia de corrida.
     """)
 
-    st.header("2. O Papel do Descanso")
-    st.write("""
-    A pausa entre os tiros é fundamental para a recuperação parcial dos estoques de fosfocreatina. Sem o descanso correto, 
-    o treino deixa de ser de velocidade e torna-se apenas exaustivo, aumentando o risco de lesões por estresse oxidativo.
-    """)
+elif pagina == "Sobre o Especialista":
+    st.header("👨‍🏫 Juarez Bruschi Junior")
+    st.write("Professor e entusiasta da corrida de rua, focado em ajudar corredores a alcançarem seus primeiros 5km com saúde e técnica.")
 
-    st.header("3. Rodagem e Capilarização")
-    st.write("""
-    Treinos leves aumentam a densidade capilar nos músculos, facilitando o transporte de oxigênio. É a base necessária 
-    para suportar os treinos intensos.
-    """)
+elif pagina == "Privacidade":
+    st.header("🔒 Política de Privacidade")
+    st.write("Este site não coleta dados pessoais dos usuários. Os cálculos são processados localmente no seu navegador.")
 
-elif aba == "Privacidade":
-    st.title("Política de Privacidade")
-    st.write("Este site utiliza cookies do Google para anúncios. Não coletamos dados de saúde dos usuários.")
-
-elif aba == "Contato":
-    st.title("Contato")
-    st.write("📧 Responsável Técnico: **Juarez Bruschi Junior - Biomédico**")
-
-# 4. RODAPÉ PROFISSIONAL
-st.write("---")
-st.caption("Desenvolvido por **Juarez Bruschi Junior | Biomédico**")
-st.caption("BioScience Run Performance © 2026")
+# Assinatura Profissional (Ajuda na autoridade do site)
+st.markdown("---")
+st.markdown("<p style='text-align: center;'>Criado por Juarez Bruschi Junior - Especialista em Treino de Performance</p>", unsafe_allow_html=True)
